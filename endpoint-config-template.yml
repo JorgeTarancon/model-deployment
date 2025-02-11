@@ -54,21 +54,13 @@ Resources:
     Type: AWS::SageMaker::EndpointConfig
     Properties:
       ProductionVariants:
-        - InitialInstanceCount: !Ref EndpointInstanceCount
-          InitialVariantWeight: 1.0
-          InstanceType: !Ref EndpointInstanceType
+        - InitialVariantWeight: 1
           ModelName: !GetAtt Model.ModelName
-          VariantName: AllTraffic
-      DataCaptureConfig:
-          EnableCapture: !Ref EnableDataCapture 
-          InitialSamplingPercentage: !Ref SamplingPercentage
-          DestinationS3Uri: !Ref DataCaptureUploadPath
-          CaptureOptions:
-            - CaptureMode: Input
-            - CaptureMode: Output
-          CaptureContentTypeHeader:
-            CsvContentTypes:
-              - "text/csv"
+          VariantName: Serverless
+          ServerlessConfig:
+            MemorySizeInMB: 2048
+            MaxConcurrency: 5
+            ProvisionedConcurrency: 1
 
   Endpoint:
     Type: AWS::SageMaker::Endpoint

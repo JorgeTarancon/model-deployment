@@ -53,14 +53,18 @@ Resources:
   EndpointConfig:
     Type: AWS::SageMaker::EndpointConfig
     Properties:
+      AsyncInferenceConfig:
+        ClientConfig:
+          MaxConcurrentInvocationsPerInstance: 4
+        OutputConfig:
+          S3FailurePath: !Ref DataCaptureUploadPath
+          S3OutputPath: !Ref DataCaptureUploadPath
       ProductionVariants:
-        - InitialVariantWeight: 1
+        - InitialInstanceCount: !Ref EndpointInstanceCount
+          InitialVariantWeight: 1.0
+          InstanceType: !Ref EndpointInstanceType
           ModelName: !GetAtt Model.ModelName
-          VariantName: Serverless
-          ServerlessConfig:
-            MemorySizeInMB: 2048
-            MaxConcurrency: 5
-            ProvisionedConcurrency: 1
+          VariantName: AllTraffic
 
   Endpoint:
     Type: AWS::SageMaker::Endpoint
